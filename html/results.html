@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <link rel="stylesheet" href="../css/results.css">
+  <body>
+      <div>
+            <h1>Score Board</h1>
+      </div>
+     
+    <div>
+      <div class="row">
+            <h1 class = "teamName" id="firstTeamName">Chennai super Kings</h1>
+      <ul id="row1">
+            <h2>Runs</h2>
+            <h1><span id="runsTeam1">00</span> / <span id="wicketsTeam1">00</span></h1>
+            <h2>Overs Played</h2>
+            <h1><span id="oversTeam1">00</span> / <span id="ballsTeam1">00</span></h1>
+            <h2>FantasyPoints</h2>
+            <h1><span id="fantasyPointsTeam1">00</span></h1>
+      </ul>
+            <h1 class = "teamName" id="secondTeamName">Mumbai Indians</h1>
+      <ul id="row2"></ul>
+      <ul id="row3"></ul>
+      <ul id="row4">
+            <h2>Runs</h2>
+            <h1><span id="runsTeam2">00</span> / <span id="wicketsTeam2">00</span></h1>
+            <h2>Overs Played</h2>
+            <h1><span id="oversTeam2">00</span> / <span id="ballsTeam2">00</span></h1>
+            <h2>FantasyPoints</h2>
+            <h1><span id="fantasyPointsTeam2">00</span></h1>
+      </ul>
+    </div>
+     <div class="gameWinner">
+            <h2>The Winnner Of The Game Is : </h2>
+      </div>
+      <button id="startNextGame" onclick="startNextGame()">Next Game</button>
+      <script src="../js/results.js"></script>
+  </body>
+</html>

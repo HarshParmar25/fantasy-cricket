@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Match</title>
+  </head>
+  <link rel="stylesheet" href="../css/match.css" />
+  <body>
+    <h1 style="text-align: center">Match Is Started</h1>
+    <div class="batTeam">
+      <h2>Batting Team</h2>
+      <h1 id="batTeamName"></h1>
+    </div>
+    <div class="bowTeam">
+      <h2>Bowling Team</h2>
+      <h1 id="bowTeamName"></h1>
+    </div>
+    <h2 style="text-align: center">Score Board</h2>
+    <div class="scoreBoard">
+      <h2 class="runsTag">Runs :<span id="runs">0</span>/<span id="wickets">0</span></h2>
+      <h2 class="oversTag">Overs :<span id="overNumber">0</span>.<span id="ballNumber">0</span></h2>
+      <h2 class="fpointsTag">Fantasy Points :<span id="fantasyPoints">00</span></h2>
+      <h2 class="batsmanTag">Batsman : <span id="batsmanName"></span></h2>
+      <h2 class="bowlerTag">Bowler : <span id="bowlerName"></span></h2>
+    </div>
+    <div class="hitScore"><h1></h1></div>
+    <button id="hitBtn" onclick="hitButton()">HIT..</button>
+    <div class="commentryBox"></div>
+    <div class="firstInningTargetBox">
+      <h4>First Innings Target</h4>
+      <h2>00</h2>
+    </div>
+    <div class="bowlingTeamFantasyPoints">
+      <h4>Bowling Team Fantasy Points</h4>
+      <h2>00</h2>
+    </div>
+    <div class="firstInningFinished" style="display: none">
+      <h1>First Inning Finished</h1>
+      <h2>First Inning Target is : </h2>
+      <button onclick="startSecondInning()">Click To Start Second Inning</button>
+    </div>
+    <div class="matchFinished" style="display: none"> 
+      <h1>Match Finished</h1>
+      <button onclick="displayResults()">Click To Display Results</button>
+    </div>
+    <script src="../js/match.js"></script>
+  </body>
+</html>
