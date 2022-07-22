@@ -2,7 +2,6 @@ let teams = [];
 teams.push(JSON.parse(localStorage.getItem("team1")));
 teams.push(JSON.parse(localStorage.getItem("team2")));
 
-
 function displayTeamNames() {
   let firstTeamName = document.getElementById("firstTeamName");
   let secondTeamName = document.getElementById("secondTeamName");
@@ -12,17 +11,17 @@ function displayTeamNames() {
 displayTeamNames();
 
 function displayPlayerScore(team, row) {
-  let playerList = document.querySelector("#row" + row);
+  let playerList = document.getElementById(row);
+  
   teams[team].players.forEach((player) => {
     playerList.innerHTML += `<li>${player.name} - Runs(${player.runs}) - Fantasy Points(${player.fantasyPoints})</li>`;
-  }
-  );
-} 
-displayPlayerScore(0, 2);
-displayPlayerScore(1, 3);
+  });
+}
+displayPlayerScore(0, "firstTeamPlayerScore");
+displayPlayerScore(1, "secondTeamPlayerScore");
 
 function displayScore(team, row) {
-  let scores = document.querySelector("#row" + row);
+  let scores = document.getElementById(row);
   scores.innerHTML = `<h2>Runs</h2>
             <h1><span id="runsTeam${team}">${countRuns(team)}</span> / <span id="wicketsTeam${team}">${countWickets(
     team
@@ -34,8 +33,8 @@ function displayScore(team, row) {
             <h2>FantasyPoints</h2>
             <h1><span id="fantasyPointsTeam${team}">${teams[team].teamFantasyPoints}</span></h1>`;
 }
-displayScore(0, 1);
-displayScore(1, 4);
+displayScore(0, "firstTeamScore");
+displayScore(1, "secondTeamScore");
 
 function displayWinner() {
   let winnerBanner = document.querySelector(".gameWinner h2");
@@ -46,23 +45,13 @@ function displayWinner() {
 displayWinner();
 
 function countRuns(teamNumber) {
-  return teams[teamNumber].scoreBoard.reduce((acc, curr) => {
-    if (curr.run === "w") {
-      return acc;
-    } else {
-      return acc + parseInt(curr.run);
-    }
+  return teams[teamNumber].scoreBoard.reduce((totalRun, curr) => {
+    return curr.run === "w" ? totalRun : totalRun + parseInt(curr.run);
   }, 0);
 }
 
 function countWickets(teamNumber) {
-  return teams[teamNumber].scoreBoard.reduce((acc, curr) => {
-    if (curr.run === "w") {
-      return acc + 1;
-    } else {
-      return acc;
-    }
-  }, 0);
+  return teams[teamNumber].scoreBoard.filter((score) => score.run === "w").length;
 }
 
 function startNextGame() {

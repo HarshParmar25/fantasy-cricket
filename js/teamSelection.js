@@ -1,96 +1,25 @@
 let teams = [];
 let selectingTeam = 0;
 
+function getTeamsDataFromLocalStorage() {
+  teams.push(JSON.parse(localStorage.getItem("team1")));
+  teams.push(JSON.parse(localStorage.getItem("team2")));
+}
 getTeamsDataFromLocalStorage();
 
-function displaySelectiongTeamName(teamNumber) {
+function displaySelectingTeamName(teamNumber) {
   document.querySelector(".teamName").innerHTML = "Selecting Team : " + teams[teamNumber].teamName;
 }
-displaySelectiongTeamName(selectingTeam);
+displaySelectingTeamName(selectingTeam);
 
 function onClickSaveTeamButton() {
-  validatePlayersCount() ? changeSelectingTeam() : alert("You have not selected the required number of players");
+  validatePlayersCount() ? changeSelectingTeam() : displayMissingPlayers();
 }
 
-function addPlayersToSelectingTeam(e) {
-  if (creditAndTotalPlayersValidation(e)) {
-    if (e.target != this) {
-      teams[selectingTeam].players.push(
-        new SelectedPlayers(e.target.dataset.name, e.target.dataset.playingrole, e.target.dataset.credit)
-      );
-      calculateAndDisplayCreditPointsOfTeam("add", e);
-      toggleElementsOfPlayerLists(row2, e);
-    }
-  } else {
-    alert("You have reached the maximum credit limit or Exceeded the maximum number of players");
-  }
-}
-
-function removePlayersFromSelectingTeam(e) {
-  if (e.target != this && e.target != document.querySelector("#row2")) {
-    teams[selectingTeam].players.splice(
-      teams[selectingTeam].players.findIndex((player) => player.name == e.target.dataset.name),
-      1
-    );
-    calculateAndDisplayCreditPointsOfTeam("subtract", e);
-    toggleElementsOfPlayerLists(row1, e);
-  }
-}
-
-row1.addEventListener("click", addPlayersToSelectingTeam);
-row2.addEventListener("click", removePlayersFromSelectingTeam);
-
-function creditAndTotalPlayersValidation(e) {
-  let displayCredit = document.querySelector("#creditscore > strong");
-  return +displayCredit.innerHTML + +e.target.dataset.credit <= 100 && teams[selectingTeam].players.length < 11;
-}
-
-function toggleElementsOfPlayerLists(clickedEle, e) {
-  clickedEle.appendChild(e.target.cloneNode(true));
-  e.target.remove();
-}
-
-function displayAllAvailablePlayers(playersArr) {
-  let list = document.querySelector("#row1");
-  totalRemainingPlayers(playersArr).forEach(function (player) {
-    list.innerHTML += `<li data-name="${player.name}" data-playingrole="${player.playingRole}" data-credit="${player.credit}">${player.name} -- ${player.playingRole} -- ${player.credit}</li>`;
-  });
-}
-displayAllAvailablePlayers(players);
-
-function changeSelectingTeam() {
-  if (selectingTeam == 1) changeSaveButtonBehaviour();
-  selectingTeam = 1;
-  emptySelectedPlayersColumn();
-  displaySelectiongTeamName(selectingTeam);
-}
-
-function emptySelectedPlayersColumn() {
-  document.querySelector("#row2").innerHTML = "";
-  document.querySelector("#creditscore > strong").innerHTML = 0;
-}
-
-function changeSaveButtonBehaviour() {
-  let saveButton = document.querySelector("#saveteam");
-  let captainSelBtn = document.querySelector("#captainSelection");
-  saveButton.innerHTML = "Team Saved";
-  saveButton.disabled = true;
-  captainSelBtn.disabled = false;
-}
-
-function totalRemainingPlayers(playersArr) {
-  return playersArr.filter(
-    (player) => !teams[1 - selectingTeam].players.some((selectedPlayer) => selectedPlayer.name == player.name)
-  );
-}
-
-function calculateAndDisplayCreditPointsOfTeam(operation, e) {
-  let credit = document.querySelector("#creditscore > strong");
-  if (operation == "add") {
-    credit.innerHTML = +credit.innerHTML + +e.target.dataset.credit;
-  } else {
-    credit.innerHTML = +credit.innerHTML - +e.target.dataset.credit;
-  }
+function displayMissingPlayers() {
+  if (countSelectedPlayers("Batsman") != 5) alert("You have to select 5 batsmen");
+  if (countSelectedPlayers("Bowler") != 5) alert("You have to select 5 bowlers");
+  if (countSelectedPlayers("Wicketkeeper") != 1) alert("You have to select 1 wicketkeeper");
 }
 
 function validatePlayersCount() {
@@ -103,6 +32,94 @@ function validatePlayersCount() {
 
 function countSelectedPlayers(role) {
   return teams[selectingTeam].players.filter((player) => player.playingRole == role).length;
+}
+
+function changeSelectingTeam() {
+  if (selectingTeam == 1) changeSaveButtonBehaviour();
+  selectingTeam = 1;
+  emptySelectedPlayersList();
+  displaySelectingTeamName(selectingTeam);
+}
+
+function changeSaveButtonBehaviour() {
+  let saveButton = document.querySelector("#saveteam");
+  let captainSelBtn = document.querySelector("#captainSelection");
+  saveButton.innerHTML = "Team Saved";
+  saveButton.disabled = true;
+  captainSelBtn.disabled = false;
+}
+
+function emptySelectedPlayersList() {
+  document.querySelector("#selectedPlayersList").innerHTML = "";
+  document.querySelector("#creditscore > strong").innerHTML = 0;
+}
+
+playersPool.addEventListener("click", addPlayersToSelectingTeam);
+selectedPlayersList.addEventListener("click", removePlayersFromSelectingTeam);
+
+function addPlayersToSelectingTeam(e) {
+  if (!isTeamValid(e)) return;
+  if (e.target != this) {
+    teams[selectingTeam].players.push(
+      new SelectedPlayers(e.target.dataset.name, e.target.dataset.playingrole, e.target.dataset.credit)
+    );
+    calculateAndDisplayCreditPointsOfTeam("addPlayer", e);
+    toggleElementsOfPlayerLists(selectedPlayersList, e);
+  }
+}
+
+function removePlayersFromSelectingTeam(e) {
+  if (e.target != this && e.target != document.querySelector("#selectedPlayersList")) {
+    teams[selectingTeam].players.splice(
+      teams[selectingTeam].players.findIndex((player) => player.name == e.target.dataset.name),
+      1
+    );
+    calculateAndDisplayCreditPointsOfTeam("removePlayer", e);
+    toggleElementsOfPlayerLists(playersPool, e);
+  }
+}
+
+function isTeamValid(e) {
+  if (!isValidCreditCount(e)) alert("You have reached maximum Credit limit!!");
+  if (!isValidPlayerCount()) alert("You have exceeded the maximum number of players");
+  return isValidCreditCount(e) && isValidPlayerCount();
+}
+
+function isValidCreditCount(e) {
+  let displayCredit = document.querySelector("#creditscore > strong");
+  return +displayCredit.innerHTML + +e.target.dataset.credit <= 100;
+}
+
+function isValidPlayerCount() {
+  return teams[selectingTeam].players.length < 11;
+}
+
+function toggleElementsOfPlayerLists(clickedEle, e) {
+  clickedEle.appendChild(e.target.cloneNode(true));
+  e.target.remove();
+}
+
+function displayAllAvailablePlayers(playersArr) {
+  let list = document.querySelector("#playersPool");
+  totalRemainingPlayers(playersArr).forEach(function (player) {
+    list.innerHTML += `<li data-name="${player.name}" data-playingrole="${player.playingRole}" data-credit="${player.credit}">${player.name} -- ${player.playingRole} -- ${player.credit}</li>`;
+  });
+}
+displayAllAvailablePlayers(players);
+
+function totalRemainingPlayers(playersArr) {
+  return playersArr.filter(
+    (player) => !teams[1 - selectingTeam].players.some((selectedPlayer) => selectedPlayer.name == player.name)
+  );
+}
+
+function calculateAndDisplayCreditPointsOfTeam(operation, e) {
+  let credit = document.querySelector("#creditscore > strong");
+  if (operation == "addPlayer") {
+    credit.innerHTML = +credit.innerHTML + +e.target.dataset.credit;
+  } else {
+    credit.innerHTML = +credit.innerHTML - +e.target.dataset.credit;
+  }
 }
 
 function goToCaptainSelectionPage() {
@@ -119,9 +136,4 @@ class SelectedPlayers {
     this.runs = runs;
     this.fantasyPoints = fantasyPoints;
   }
-}
-
-function getTeamsDataFromLocalStorage() {
-  teams.push(JSON.parse(localStorage.getItem("team1")));
-  teams.push(JSON.parse(localStorage.getItem("team2")));
 }

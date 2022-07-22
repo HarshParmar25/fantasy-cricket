@@ -1,19 +1,19 @@
 let teams = [];
-getTeamsDataFromLocalStorage();
 
 function getTeamsDataFromLocalStorage() {
   teams.push(JSON.parse(localStorage.getItem("team1")));
   teams.push(JSON.parse(localStorage.getItem("team2")));
 }
+getTeamsDataFromLocalStorage();
 
-function displayTeamPlayers(team, row) {
-  let playerList = document.querySelector("#row" + row);
+function displayTeamPlayers(team, teamPool) {
+  let playerList = document.getElementById(teamPool);
   teams[team].players.forEach(function (player) {
     playerList.innerHTML += `<li data-name="${player.name}" data-playingrole="${player.playingRole}" data-credit="${player.credit}">${player.name} -- ${player.playingRole} -- ${player.credit}</li>`;
   });
 }
-displayTeamPlayers(0, 1);
-displayTeamPlayers(1, 2);
+displayTeamPlayers(0, "firstTeam");
+displayTeamPlayers(1, "secondTeam");
 
 function displayTeamNames() {
   let firstTeamName = document.getElementById("firstTeamName");
@@ -23,41 +23,43 @@ function displayTeamNames() {
 }
 displayTeamNames();
 
-function selectCaptain(teamNumber) {
+function selectCaptainsForBothTeams(teamNumber, captain) {
   return function (event) {
-    changeColorOfPreviouslySelectedCaptain(event, "captainColor");
+    toggleColorsAndButtons(captain, event);
+
     teams[teamNumber].players.forEach(function (player) {
-      if (player.hasOwnProperty("isCaptain")) {
-        delete player.isCaptain;
+      if (player.hasOwnProperty(captain)) {
+        delete player[captain];
       }
       if (event.target.dataset.name === player.name) {
-        player.isCaptain = true;
-        event.target.classList.add("captainColor");
+        player[captain] = true;
+        chnageColorOfSelectedCaptain(event, captain);
       }
     });
-    if (teamNumber == 1) {
-      document.getElementById("viceCaptainSelectionBtn").hidden = false;
-    }
   };
 }
 
-function selectViceCaptain(teamNumber) {
-  return function (event) {
-    changeColorOfPreviouslySelectedCaptain(event, "viceCaptainColor");
-    document.getElementById("viceCaptainSelectionBtn").hidden = true;
-    teams[teamNumber].players.forEach(function (player) {
-      if (player.hasOwnProperty("isViceCaptain")) {
-        delete player.isViceCaptain;
-      }
-      if (event.target.dataset.name === player.name && !event.target.classList.contains("captainColor")) {
-        player.isViceCaptain = true;
-        event.target.classList.add("viceCaptainColor");
-      }
-    });
-    if (teamNumber == 1) {
-      document.getElementById("startMatch").hidden = false;
-    }
-  };
+function toggleColorsAndButtons(captain, event) {
+  if (captain == "isCaptain") {
+    changeColorOfPreviouslySelectedCaptain(event, "isCaptain");
+    displayViceCaptainSelectionButton();
+  } else {
+    changeColorOfPreviouslySelectedCaptain(event, "isViceCaptain");
+    displayStartMatchButton();
+  }
+}
+
+function displayStartMatchButton() {
+  document.getElementById("viceCaptainSelectionBtn").hidden = true;
+  document.getElementById("startMatch").hidden = false;
+}
+
+function displayViceCaptainSelectionButton() {
+  document.getElementById("viceCaptainSelectionBtn").hidden = false;
+}
+
+function chnageColorOfSelectedCaptain(event, captain) {
+  event.target.classList.add(captain);
 }
 
 function changeColorOfPreviouslySelectedCaptain(event, className) {
@@ -69,25 +71,25 @@ function changeColorOfPreviouslySelectedCaptain(event, className) {
   });
 }
 
-let selectCaptainForFirstTeam = selectCaptain(0);
-let selectCaptainForSecondTeam = selectCaptain(1);
+let selectCaptainForFirstTeam = selectCaptainsForBothTeams(0, "isCaptain");
+let selectCaptainForSecondTeam = selectCaptainsForBothTeams(1, "isCaptain");
 
 function captainSelectionBtn() {
-  row1.addEventListener("click", selectCaptainForFirstTeam);
-  row2.addEventListener("click", selectCaptainForSecondTeam);
+  firstTeam.addEventListener("click", selectCaptainForFirstTeam);
+  secondTeam.addEventListener("click", selectCaptainForSecondTeam);
 }
 captainSelectionBtn();
 
 function viceCaptainSelectionBtn() {
   removeCaptonSelectionButtonListners();
   document.getElementById("captainViceCaptainSelection").innerHTML = "Vice Captain Selection";
-  row1.addEventListener("click", selectViceCaptain(0));
-  row2.addEventListener("click", selectViceCaptain(1));
+  firstTeam.addEventListener("click", selectCaptainsForBothTeams(0, "isViceCaptain"));
+  secondTeam.addEventListener("click", selectCaptainsForBothTeams(1, "isViceCaptain"));
 }
 
 function removeCaptonSelectionButtonListners() {
-  row1.removeEventListener("click", selectCaptainForFirstTeam);
-  row2.removeEventListener("click", selectCaptainForSecondTeam);
+  firstTeam.removeEventListener("click", selectCaptainForFirstTeam);
+  secondTeam.removeEventListener("click", selectCaptainForSecondTeam);
 }
 
 function onClickStartMatchButton() {
@@ -95,4 +97,3 @@ function onClickStartMatchButton() {
   localStorage.setItem("team2", JSON.stringify(teams[1]));
   window.location.replace("../html/match.html");
 }
-

@@ -37,11 +37,11 @@
         left: 62%;
   }
 
-  .captainColor {
+  .isCaptain {
         background-color: green;
   }
 
-  .viceCaptainColor {
+  .isViceCaptain {
         background-color: aqua;
   }
 

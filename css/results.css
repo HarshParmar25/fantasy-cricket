@@ -15,13 +15,13 @@
         cursor: pointer;
   }
 
-  #row2 , #row3 {
+  #firstTeamPlayerScore , #secondTeamPlayerScore {
       overflow-y: auto;
-      width: fit-content;
+      width: auto;
       padding-left: 5px;
   }
 
-  #row1, #row4 {
+  #firstTeamScore, #secondTeamScore {
       justify-content: center;
       text-align: center;
       margin: 0;
@@ -36,8 +36,6 @@
         align-items: left;
         list-style-type: none;
   }
-
- 
 
   .teamName {
         font-size: 24px;
