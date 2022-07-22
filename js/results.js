@@ -2,18 +2,24 @@ let teams = [];
 teams.push(JSON.parse(localStorage.getItem("team1")));
 teams.push(JSON.parse(localStorage.getItem("team2")));
 
-function displayCommentry(team, row) {
+
+function displayTeamNames() {
   let firstTeamName = document.getElementById("firstTeamName");
   let secondTeamName = document.getElementById("secondTeamName");
   firstTeamName.innerHTML = teams[0].teamName;
   secondTeamName.innerHTML = teams[1].teamName;
-  let playerList = document.querySelector("#row" + row);
-  teams[team].scoreBoard.forEach((element) => {
-    playerList.innerHTML += `<li>Over - ${element.over}.${element.ball} - ${element.date} - ${element.run}</li>`;
-  });
 }
-displayCommentry(0, 2);
-displayCommentry(1, 3);
+displayTeamNames();
+
+function displayPlayerScore(team, row) {
+  let playerList = document.querySelector("#row" + row);
+  teams[team].players.forEach((player) => {
+    playerList.innerHTML += `<li>${player.name} - Runs(${player.runs}) - Fantasy Points(${player.fantasyPoints})</li>`;
+  }
+  );
+} 
+displayPlayerScore(0, 2);
+displayPlayerScore(1, 3);
 
 function displayScore(team, row) {
   let scores = document.querySelector("#row" + row);
@@ -26,7 +32,7 @@ function displayScore(team, row) {
     teams[team].scoreBoard[teams[team].scoreBoard.length - 1].over
   }</span>.<span id="ballsTeam${team}">${teams[team].scoreBoard[teams[team].scoreBoard.length - 1].ball}</span></h1>
             <h2>FantasyPoints</h2>
-            <h1><span id="fantasyPointsTeam${team}">${teams[team].fantasyPoints}</span></h1>`;
+            <h1><span id="fantasyPointsTeam${team}">${teams[team].teamFantasyPoints}</span></h1>`;
 }
 displayScore(0, 1);
 displayScore(1, 4);

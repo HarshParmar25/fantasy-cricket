@@ -16,7 +16,9 @@
   }
 
   #row2 , #row3 {
-      overflow-y: scroll;
+      overflow-y: auto;
+      width: fit-content;
+      padding-left: 5px;
   }
 
   #row1, #row4 {
@@ -32,8 +34,10 @@
         flex-direction: column;
         justify-content: left;
         align-items: left;
-        list-style-type: square;
+        list-style-type: none;
   }
+
+ 
 
   .teamName {
         font-size: 24px;
