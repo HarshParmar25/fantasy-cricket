@@ -12,7 +12,7 @@ displayTeamNames();
 
 function displayPlayerScore(team, row) {
   let playerList = document.getElementById(row);
-  
+
   teams[team].players.forEach((player) => {
     playerList.innerHTML += `<li>${player.name} - Runs(${player.runs}) - Fantasy Points(${player.fantasyPoints})</li>`;
   });
@@ -38,7 +38,7 @@ displayScore(1, "secondTeamScore");
 
 function displayWinner() {
   let winnerBanner = document.querySelector(".gameWinner h2");
-  teams[0].fantasyPoints > teams[1].fantasyPoints
+  teams[0].teamFantasyPoints > teams[1].teamFantasyPoints
     ? (winnerBanner.innerHTML += teams[0].teamName)
     : (winnerBanner.innerHTML += teams[1].teamName);
 }
