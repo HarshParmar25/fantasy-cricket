@@ -25,32 +25,58 @@ function getTeamsDataFromLocalStorage() {
 
 function onClickHitButton() {
   hitDelay();
-  let { displayWicketsElement, numOvers } = getHtmlElements();
-  if (displayWicketsElement.innerHTML == 11 || numOvers == 5) {
+
+  if (isInningFinished()) {
     changeInning();
     return;
   }
   displayPlayingBatsmanAndBowler();
   let { runsData } = runsAndFantasyPointsData();
   let randomRun = Math.floor(Math.random() * runsData.length);
+
+  if (isDismissalForDuck(runsData[randomRun])) {
+    handleDismissalForDuck();
+    return;
+  }
   incrementBallsAndOvers();
   addTeamFantasyPoints(randomRun);
+}
+
+function isDismissalForDuck(randomRun) {
+  let scoreBoardLength = teams[playingTeam].scoreBoard.length;
+  return randomRun == "w" && scoreBoardLength > 1 && teams[playingTeam].scoreBoard[scoreBoardLength - 1].run == "w";
+}
+
+function handleDismissalForDuck() {
+  let { displayFantasyPointsElement } = getHtmlElements();
+  storePlayerFantasyPoints(playingTeam, -2);
+  teams[playingTeam].teamFantasyPoints -= 2 * getPlayerPositionBonus(playingTeam);
+  displayFantasyPointsElement.innerHTML = teams[playingTeam].teamFantasyPoints;
+}
+
+function isInningFinished() {
+  let { displayWicketsElement, numOvers } = getHtmlElements();
+  return displayWicketsElement.innerHTML == 11 || numOvers == 5;
 }
 
 function changeInning() {
   playingTeam = 1 - playingTeam;
   clearPageAfterInningIsFinished();
   displayBattingBowlingTeamName(playingTeam);
+
   document.querySelector(".firstInningTargetBox h2").innerHTML = displayTarget();
+
   playingTeam == 1 ? displayFirstInningFinishedPage() : displayMatchFinishedPage();
 }
 
 function addTeamFantasyPoints(randomRun) {
   let { displayWicketsElement } = getHtmlElements();
   let { runsData } = runsAndFantasyPointsData();
+
   runsData[randomRun] === "w"
     ? addFantasyPointsToBowlingTeamOnWicket(displayWicketsElement)
     : addTeamFantasyPointsIfHitIsNotWicket(randomRun);
+
   displayCurrentHitScore(randomRun);
 }
 
@@ -90,43 +116,30 @@ function getHtmlElements() {
 }
 
 function addTeamFantasyPointsIfHitIsNotWicket(randomRun) {
-  let { displayWicketsElement, displayBatsmanElement, displayFantasyPointsElement } = getHtmlElements();
+  let { displayBatsmanElement, displayFantasyPointsElement } = getHtmlElements();
   let { runsData, fantasyPointsData } = runsAndFantasyPointsData();
-  storePlayerFantasyPoints(playingTeam, displayBatsmanElement, fantasyPointsData[randomRun]);
+  storePlayerFantasyPoints(playingTeam, fantasyPointsData[randomRun]);
   storePlayerRuns(playingTeam, displayBatsmanElement, runsData[randomRun]);
-  let player = teams[playingTeam].players[+displayWicketsElement.innerHTML];
-  if (player.hasOwnProperty("isCaptain")) {
-    addFantasyPointsAccordingToPosition(randomRun, 2);
-  } else if (player.hasOwnProperty("isViceCaptain")) {
-    addFantasyPointsAccordingToPosition(randomRun, 1.5);
-  } else {
-    addFantasyPointsAccordingToPosition(randomRun, 1);
-  }
+  addFantasyPointsAccordingToPosition(randomRun);
   displayFantasyPointsElement.innerHTML = teams[playingTeam].teamFantasyPoints;
 }
 
 function addFantasyPointsToBowlingTeamOnWicket() {
-  let { displayWicketsElement, displayBowlerElement } = getHtmlElements();
-  if (teams[playingTeam].players[+displayWicketsElement.innerHTML].hasOwnProperty("isCaptain")) {
-    teams[1 - playingTeam].teamFantasyPoints += 20;
-    storePlayerFantasyPoints(1 - playingTeam, displayBowlerElement, 20);
-  } else if (teams[playingTeam].players[+displayWicketsElement.innerHTML].hasOwnProperty("isViceCaptain")) {
-    teams[1 - playingTeam].teamFantasyPoints += 15;
-    storePlayerFantasyPoints(1 - playingTeam, displayBowlerElement, 15);
-  } else {
-    teams[1 - playingTeam].teamFantasyPoints += 10;
-    storePlayerFantasyPoints(1 - playingTeam, displayBowlerElement, 10);
-  }
+  let { displayWicketsElement } = getHtmlElements();
+  teams[1 - playingTeam].teamFantasyPoints += 10 * getPlayerPositionBonus(playingTeam);
+  storePlayerFantasyPointsOfBowlingTeam(1 - playingTeam, 10);
   displayWicketsElement.innerHTML = parseInt(displayWicketsElement.innerHTML) + 1;
 }
 
-function addFantasyPointsAccordingToPosition(randomRun, fPointsOfPosition) {
+function addFantasyPointsAccordingToPosition(randomRun) {
   let { displayRunsElement } = getHtmlElements();
   let { runsData, fantasyPointsData } = runsAndFantasyPointsData();
+
   displayRunsElement.innerHTML = parseInt(displayRunsElement.innerHTML) + parseInt(runsData[randomRun]);
-  teams[playingTeam].teamFantasyPoints += parseInt(fantasyPointsData[randomRun]) * fPointsOfPosition;
+  teams[playingTeam].teamFantasyPoints += parseInt(fantasyPointsData[randomRun]) * getPlayerPositionBonus(playingTeam);
+
   if (+runsData[randomRun] === 0) {
-    teams[1 - playingTeam].teamFantasyPoints += fPointsOfPosition;
+    teams[1 - playingTeam].teamFantasyPoints += getPlayerPositionBonus(playingTeam);
   }
 }
 
@@ -166,8 +179,10 @@ function displayAndSetScoreCommentry(randomRun) {
   let { displayScoreCommentryElement, numOvers, numBalls } = getHtmlElements();
   let { runsData } = runsAndFantasyPointsData();
   currentTimeAndDate = dateAndTimeFormate();
+
   displayScoreCommentryElement.innerHTML += `<li>Over ${numOvers}.${numBalls} - ${currentTimeAndDate} - ${runsData[randomRun]}</li>`;
   teams[playingTeam].scoreBoard.push(new ScoreCommentry(numOvers, numBalls, currentTimeAndDate, runsData[randomRun]));
+
   displayBowlingTeamFantsyPoints();
 }
 
@@ -236,21 +251,19 @@ function hitDelay() {
 }
 
 function storePlayerRuns(team, playerName, runs) {
-  let { displayBowlerElement } = getHtmlElements();
   let player = teams[team].players.find((player) => player.name === playerName.innerHTML);
   player.runs += +runs;
-  if (runs == 0) storePlayerFantasyPoints(1 - team, displayBowlerElement, 1);
+  if (runs == 0) storePlayerFantasyPointsOfBowlingTeam(1 - team, 1);
 }
 
-function storePlayerFantasyPoints(team, playerName, fPoints) {
-  let positionBonus = 1;
-  let player = teams[team].players.find((player) => player.name === playerName.innerHTML);
-  if (player.hasOwnProperty("isCaptain")) {
-    positionBonus = 2;
-  } else if (player.hasOwnProperty("isViceCaptain")) {
-    positionBonus = 1.5;
-  }
-  player.fantasyPoints += +fPoints * positionBonus;
+function storePlayerFantasyPoints(team, fPoints) {
+  let player = getPlayingPlayer(team);
+  player.fantasyPoints += +fPoints * getPlayerPositionBonus(team);
+}
+
+function storePlayerFantasyPointsOfBowlingTeam(team, fPoints) {
+  let player = getPlayingPlayer(team);
+  player.fantasyPoints += +fPoints * getPlayerPositionBonus(1 - team);
 }
 
 class ScoreCommentry {
@@ -260,4 +273,19 @@ class ScoreCommentry {
     this.date = date;
     this.run = run;
   }
+}
+
+function getPlayerPositionBonus(team) {
+  let { displayBowlerElement, displayBatsmanElement } = getHtmlElements();
+  playingPlayer = team == playingTeam ? displayBatsmanElement.innerHTML : displayBowlerElement.innerHTML;
+  let player = getPlayingPlayer(team, playingPlayer);
+  if (player.hasOwnProperty("isCaptain")) return 2;
+  if (player.hasOwnProperty("isViceCaptain")) return 1.5;
+  return 1;
+}
+
+function getPlayingPlayer(team) {
+  let { displayBowlerElement, displayBatsmanElement } = getHtmlElements();
+  playingPlayer = team == playingTeam ? displayBatsmanElement.innerHTML : displayBowlerElement.innerHTML;
+  return teams[team].players.find((player) => player.name === playingPlayer);
 }
