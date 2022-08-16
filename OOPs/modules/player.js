@@ -1,10 +1,14 @@
+import { runsData } from "./runsData.js";
+import { Team } from "./team.js";
+import { scoreBoard } from "../index.js";
+
 class Player {
-  constructor(name, credit, playingRole, runs = 0, fantasyPoints = 0) {
+  constructor(name, credit, playingRole) {
     this.name = name;
     this.credit = credit;
     this.playingRole = playingRole;
-    this.runs = runs;
-    this.fantasyPoints = fantasyPoints;
+    this.runs = 0;
+    this.fantasyPoints = 0;
   }
 
   getName() {
@@ -27,11 +31,17 @@ class Player {
     return this.fantasyPoints;
   }
 
+  setPoints(runs) {
+    this.setRuns(runs);
+    this.setFantasyPoints(runs);
+  }
+
   setRuns(runs) {
     this.runs += runs;
   }
 
-  setFantasyPoints(fPoints) {
+  setFantasyPoints(runs) {
+    let fPoints = runsData.find((points) => points.run === runs).fantasyPoints;
     this.fantasyPoints += +fPoints * this.getPlayerPositionBonus();
   }
 

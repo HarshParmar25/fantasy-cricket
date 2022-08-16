@@ -6,6 +6,7 @@ const runsData = [
   { run: 4, fantasyPoints: 6, opponentFantasyPoints: 0 },
   { run: 6, fantasyPoints: 8, opponentFantasyPoints: 0 },
   { run: "w", fantasyPoints: 0, opponentFantasyPoints: 10 },
+  { run: "dismissalDuck", fantasyPoints: -2, opponentFantasyPoints: 0 },
 ];
 
 export { runsData };

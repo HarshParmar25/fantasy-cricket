@@ -1,9 +1,10 @@
 class Team {
-  constructor(teamName, teamFantasyPoints = 0, teamRuns = 0) {
+  constructor(teamName) {
     this.teamName = teamName;
     this.teamMembers = [];
-    this.teamFantasyPoints = teamFantasyPoints;
-    this.teamRuns = teamRuns;
+    this.teamFantasyPoints = 0;
+    this.teamRuns = 0;
+    this.wickets = 0;
   }
 
   getTeamMembers() {
@@ -38,12 +39,29 @@ class Team {
     this.teamName = teamName;
   }
 
-  setTeamFantasyPoints(teamFantasyPoints) {
-    this.teamFantasyPoints += teamFantasyPoints;
+  setTeamFantasyPoints() {
+    this.teamFantasyPoints += this.teamMembers
+      .map((player) => {
+        return player.fantasyPoints;
+      })
+      .reduce((a, b) => a + b);
   }
 
   setTeamRuns(teamRuns) {
-    this.teamRuns += teamRuns;
+    this.teamRuns += this.teamMembers
+      .map((player) => {
+        return player.runs;
+      })
+      .reduce((a, b) => a + b);
+  }
+
+  setWicket() {
+    this.wickets += 1;
+  }
+
+  isDismissalDuck(scoreBoard) {
+    if (scoreBoard.length >= 1) return scoreBoard[scoreBoard.length - 1].runs === "w";
+    return false;
   }
 }
 
