@@ -1,6 +1,5 @@
 import { runsData } from "./runsData.js";
 import { Team } from "./team.js";
-import { scoreBoard } from "../index.js";
 
 class Player {
   constructor(name, credit, playingRole) {

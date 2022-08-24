@@ -7,6 +7,10 @@ class Team {
     this.wickets = 0;
   }
 
+  // static createTeam(name){
+  //  return new Team(name)
+  // }
+
   getTeamMembers() {
     return this.teamMembers;
   }
@@ -35,7 +39,6 @@ class Team {
   }
 
   setTeamName(teamName) {
-    console.log(this);
     this.teamName = teamName;
   }
 
