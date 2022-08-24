@@ -2,15 +2,11 @@
   "name": "oops",
   "version": "1.0.0",
   "description": "",
-  "main": "match.js",
+  "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
-  "type": "module",
-  "devDependencies": {
-    "jest": "^28.1.3"
-  }
+  "license": "ISC"
 }
