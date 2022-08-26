@@ -7,12 +7,16 @@ class Team {
     this.wickets = 0;
   }
 
-  // static createTeam(name){
-  //  return new Team(name)
-  // }
+  static createTeam(name) {
+    return new Team(name);
+  }
 
   getTeamMembers() {
     return this.teamMembers;
+  }
+
+  getPlayerByName(name) {
+    return this.teamMembers.find((player) => player.name === name);
   }
 
   addTeamMember(teamMember) {

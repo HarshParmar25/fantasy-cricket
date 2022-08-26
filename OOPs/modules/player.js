@@ -1,11 +1,11 @@
-import { runsData } from "./runsData.js";
+import { runsData } from "./rules.js";
 import { Team } from "./team.js";
 
 class Player {
-  constructor(name, credit, playingRole) {
+  constructor(name, credit, role) {
     this.name = name;
     this.credit = credit;
-    this.playingRole = playingRole;
+    this.role = role;
     this.runs = 0;
     this.fantasyPoints = 0;
   }
@@ -28,6 +28,14 @@ class Player {
 
   getFantasyPoints() {
     return this.fantasyPoints;
+  }
+
+  setCaptain() {
+    this.captain = true;
+  }
+
+  setViceCaptain() {
+    this.viceCaptain = true;
   }
 
   setPoints(runs) {

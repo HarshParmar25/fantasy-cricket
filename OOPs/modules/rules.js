@@ -9,4 +9,12 @@ const runsData = [
   { run: "dismissalDuck", fantasyPoints: -2, opponentFantasyPoints: 0 },
 ];
 
-export { runsData };
+const playingRules = {
+  creditCount: 100,
+  playersCount: 11,
+  batsmanCount: 5,
+  bowlerCount: 5,
+  wicketkeeperCount: 1,
+};
+
+export { runsData, playingRules };
