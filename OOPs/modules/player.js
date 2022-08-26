@@ -2,7 +2,8 @@ import { runsData } from "./rules.js";
 import { Team } from "./team.js";
 
 class Player {
-  constructor(name, credit, role) {
+  constructor(id, name, credit, role) {
+    this.id = id;
     this.name = name;
     this.credit = credit;
     this.role = role;

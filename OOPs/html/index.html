@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <link rel="stylesheet" href="../css/index.css">
+  <body>
+    <div class="toss">
+      <h1>Welcome to Fantasy Cricket</h1>
+      <h2>Enter Team name :</h2>
+      Team-1 <input type="text" name="team1" id="team1" /><br />
+      Team-2 <input type="text" name="team2" id="team2" /><br />
+
+      <button id="toss">Toss</button><br />
+      <div id="result"></div>
+      <button id="teamSelectionButton" hidden>Team Selection</button>
+    </div>
+    <script src="../modules/toss.js" type="module"></script>
+    <script src="../controller/index.js" type="module"></script>
+
+  </body>
+</html>

@@ -1,4 +1,3 @@
-import { team1, team2 } from "../teamFormation.js";
 import { playingRules } from "./rules.js";
 
 class Validate {

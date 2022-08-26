@@ -1,4 +1,3 @@
-// import { scoreBoard } from "../index.js";
 
 class Match {
   static startMatch() {
